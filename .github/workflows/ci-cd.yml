@@ -45,7 +45,9 @@ jobs:
           node-version: 22
 
       - name: Install Dependencies
-        run: pnpm install
+        run: |
+          npm i -g pnpm
+          pnpm install
 
       - name: Build Package
         run: pnpm build
@@ -66,7 +68,9 @@ jobs:
           node-version: 22
 
       - name: Install Dependencies
-        run: pnpm install
+        run: |
+          npm i -g pnpm
+          pnpm install
 
       - name: Create Changelog & Version
         run: pnpm dlx semantic-release
@@ -91,7 +95,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install Dependencies
-        run: pnpm install
+        run: |
+          npm i -g pnpm
+          pnpm install
 
       - name: Publish Package
         run: pnpm publish --access public

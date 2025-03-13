@@ -1,13 +1,14 @@
-import { renderHook } from "@testing-library/react";
-import { useFetch } from "./useFetch";
+import { renderHook, waitFor } from '@testing-library/react';
+import { useFetch } from './useFetch';
 
-test("fetches data successfully", async () => {
+test('fetches data successfully', async () => {
   global.fetch = jest.fn(() =>
-    Promise.resolve({ json: () => Promise.resolve({ success: true }) })
+    Promise.resolve({ json: () => Promise.resolve({ success: true }) }),
   ) as jest.Mock;
 
-  const { result, waitForNextUpdate } = renderHook(() => useFetch("/api/test"));
-  await waitForNextUpdate();
+  const { result } = renderHook(() => useFetch('/api/test'));
+
+  await waitFor(() => expect(result.current).not.toBeNull());
+
   expect(result.current).toEqual({ success: true });
 });
-x

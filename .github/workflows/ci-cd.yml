@@ -18,11 +18,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: 22
+          scope: '@miused'
+          always-auth: true
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
-        run: pnpm install
+        run: |
+          npm i -g pnpm
+          pnpm install
 
       - name: Run Tests
         run: pnpm test
@@ -38,7 +42,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install Dependencies
         run: pnpm install
@@ -59,7 +63,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install Dependencies
         run: pnpm install
@@ -83,7 +87,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install Dependencies

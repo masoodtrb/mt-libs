@@ -8,7 +8,7 @@ test('fetches data successfully', async () => {
 
   const { result } = renderHook(() => useFetch('/api/test'));
 
-  await waitFor(() => expect(result.current).not.toBeNull());
+  await waitFor(() => expect(result.current.data).not.toBeNull());
 
-  expect(result.current).toEqual({ success: true });
+  expect(result.current.data).toEqual({ success: true });
 });

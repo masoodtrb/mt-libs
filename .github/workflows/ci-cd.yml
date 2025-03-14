@@ -102,7 +102,10 @@ jobs:
           npm i -g pnpm
           pnpm install
 
+      - name: Authenticate npm
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
       - name: Publish Package
-        run: pnpm publish --access public
+        run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

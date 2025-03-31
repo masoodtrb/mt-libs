@@ -1,5 +1,5 @@
 {
-  "name": "@mused/core-utils",
+  "name": "@mtused/core-utils",
   "version": "1.0.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",

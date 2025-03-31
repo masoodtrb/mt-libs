@@ -35,7 +35,7 @@ async function main() {
 
   // Create package.json
   const pkg = {
-    name: `@mto/${name}`,
+    name: `@mtused/${name}`,
     version: '0.1.0',
     main: 'dist/index.cjs',
     module: 'dist/index.mjs',

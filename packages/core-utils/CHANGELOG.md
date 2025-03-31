@@ -1,4 +1,4 @@
-# @mused/core-utils
+# @mtused/core-utils
 
 ## 1.0.0
 

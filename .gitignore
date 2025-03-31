@@ -48,3 +48,5 @@ storybook-static/
 # Next.js (if using in consumer projects)
 .next/
 out/
+
+*storybook.log

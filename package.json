@@ -7,6 +7,7 @@
     "dev": "pnpm -r dev",
     "test": "pnpm -r test",
     "create": "tsx scripts/create-package.ts",
+
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --check .",
@@ -15,7 +16,9 @@
     "build-storybook": "storybook build",
     "changeset": "changeset",
     "version": "changeset version",
-    "prepare": "husky && husky install"
+    "prepare": "husky install",
+    "commit:check": "commitlint --from=HEAD~1",
+    "changeset:status": "changeset status"
   },
   "devDependencies": {
     "@changesets/assemble-release-plan": "^6.0.6",

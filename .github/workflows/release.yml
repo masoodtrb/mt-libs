@@ -1,4 +1,4 @@
-name: Release on Main
+name: Release
 
 on:
   push:
@@ -10,65 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write # to push commits & create releases
+      contents: write
       packages: write
       id-token: write
 
     steps:
-      - name: 🛎️ Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 🧰 Setup Node
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
 
-      - name: ⚙️ Enable Corepack
-        run: corepack enable
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: 📦 Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: 🛠 Build all packages
+      - name: Build packages
         run: pnpm build
 
-      - name: 🧮 Version packages with Changesets
-        run: pnpm version
-
-      - name: ✅ Commit version bumps & tags
-        run: |
-          git config user.name "Masoud GitHub"
-          git config user.email "actions@github.com"
-          git add .
-          if git diff --cached --quiet; then
-            echo "⚠️ No version changes to commit."
-            exit 0
-          fi
-          git commit -m "chore: version bump"
-          git push
-
-          # Tag each changed package
-          for dir in packages/*; do
-            if [ -f "$dir/package.json" ]; then
-              NAME=$(jq -r .name "$dir/package.json")
-              VERSION=$(jq -r .version "$dir/package.json")
-              TAG="${NAME}@${VERSION}"
-              if ! git rev-parse "$TAG" >/dev/null 2>&1; then
-                git tag "$TAG"
-                git push origin "$TAG"
-              fi
-            fi
-          done
-
-      - name: 🚀 Publish to npm
-        run: pnpm publish -r --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: 📝 Create GitHub Release
+      - name: Release with Changesets
         uses: changesets/action@v1
         with:
-          version: false
+          version: pnpm changeset version --snapshot auto
+          publish: pnpm publish -r --access public --no-git-checks
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

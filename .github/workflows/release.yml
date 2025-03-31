@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Only release when a version tag is pushed
+
+jobs:
+  release:
+    name: Tagged Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Enable Corepack (for pnpm)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Publish to npm
+        run: pnpm publish -r --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release with Changesets
+        uses: changesets/action@v1
+        with:
+          version: false # We've already versioned & published
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

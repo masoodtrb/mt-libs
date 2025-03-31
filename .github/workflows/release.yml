@@ -1,42 +1,69 @@
-name: Release
+name: Manual Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*' # Only release when a version tag is pushed
+  workflow_dispatch: # Only manually triggered from GitHub UI
 
 jobs:
   release:
-    name: Tagged Release
+    name: Release Packages
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 🛎️ Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: 🧰 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Enable Corepack (for pnpm)
+      - name: ⚙️ Enable Corepack
         run: corepack enable
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build all packages
+      - name: 🛠 Build all packages
         run: pnpm build
 
-      - name: Publish to npm
-        run: pnpm publish -r --access public
+      - name: 🧮 Version packages with Changesets
+        run: pnpm version
+
+      - name: ✅ Commit version bumps (if any)
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          if git diff --cached --quiet; then
+            echo "⚠️ No version changes to commit."
+          else
+            git commit -m "chore: version bump"
+            git push
+          fi
+
+      - name: 🔖 Tag version from changed package(s)
+        run: |
+          for dir in packages/*; do
+            if [ -f "$dir/package.json" ]; then
+              NAME=$(jq -r .name "$dir/package.json")
+              VERSION=$(jq -r .version "$dir/package.json")
+              TAG="${NAME}@${VERSION}"
+              if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+                git tag "$TAG"
+                git push origin "$TAG"
+              fi
+            fi
+          done
+
+      - name: 🚀 Publish to npm
+        run: pnpm publish -r --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Create GitHub Release with Changesets
+      - name: 📝 Create GitHub Release
         uses: changesets/action@v1
         with:
-          version: false # We've already versioned & published
+          version: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

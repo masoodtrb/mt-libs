@@ -32,9 +32,10 @@ jobs:
 
       - name: ✅ Commit version bumps (if any)
         run: |
-          git config user.name "GitHub Actions"
+          git config user.name "Masoud GitHub"
           git config user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}
+          git remote set-url --push origin https://masoodtrb:${{ secrets.GH_PAT }}N@github.com/${{ github.repository }}
           git add .
           if git diff --cached --quiet; then
             echo "⚠️ No version changes to commit."
